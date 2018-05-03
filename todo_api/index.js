@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', function(req, res) {
-    res.send('Hello I am the root route');
+    res.send('hi there');
 });
 
 app.use('/api/todos', todoRoutes);
