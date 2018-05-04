@@ -40,7 +40,7 @@ exports.updateTodo = function(req, res) {
     });
 };
 
-exports.removeTodo = function(req, res) {
+exports.deleteTodo = function(req, res) {
     db.Todo.remove({_id: req.params.todoId})
     .then(function() {
         res.json({message: "To-do deleted successfully!"});

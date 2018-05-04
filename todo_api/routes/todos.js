@@ -10,6 +10,6 @@ router.route('/')
 router.route('./:todoId')
     .get(helpers.getTodo)
     .put(helpers.updateTodo)
-    .delete(helpers.removeTodo)
+    .delete(helpers.deleteTodo)
 
 module.exports = router;

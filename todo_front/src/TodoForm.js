@@ -11,9 +11,7 @@ class TodoForm extends Component {
     }
     
     handleChange(e) {
-        this.setState({
-            inputValue: e.target.value
-        });
+        this.setState({inputValue: e.target.value});
     }
     
     handleSubmit() {

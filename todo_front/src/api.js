@@ -1,4 +1,4 @@
-const API_URL = '/api/todos/';
+const API_URL = 'https://310400b338b845c194582903410cc444.vfs.cloud9.us-east-2.amazonaws.com/api/todos/';
 
 export async function getTodos() {
     return fetch(API_URL)
