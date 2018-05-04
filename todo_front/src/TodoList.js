@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-const API_URL = '/api/todos';
+import TodoItem from './TodoItem';
+import TodoForm from './TodoForm';
+const API_URL = '/api/todos/';
 
 class TodoList extends Component {
     constructor(props) {
@@ -7,12 +9,16 @@ class TodoList extends Component {
         this.state = {
             todos: []
         };
+        this.addTodo = this.addTodo.bind(this);
     }
     
     componentWillMount() {
         this.loadTodos();
     }
     
+    /*
+        LOADING ALL THE TODOS TO BE DISPLAYED
+    */
     loadTodos() {
         fetch(API_URL)
         .then(resp => {
@@ -32,10 +38,78 @@ class TodoList extends Component {
         .then(todos => this.setState({todos}));
     }
     
+    /*
+        SENDING A NEW TODO TO THE DB
+    */
+    addTodo(val) {
+        fetch(API_URL, {
+            method: 'post',
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            }),
+            body: JSON.stringify({name: val})
+        })
+        .then(resp => {
+            if(!resp.ok) {
+                if(resp.status >= 400 && resp.status < 500) {
+                    return resp.json().then(data => {
+                        let err = {errorMessage: data.message};
+                        throw err;
+                    });
+                } else {
+                    let err = {errorMessage: 'Server is not responding. Please try again later.'};
+                    throw err;
+                }
+            }
+            return resp.json();
+        })
+        .then(newTodo => {
+            this.setState({todos: [...this.state.todos, newTodo]})
+        });
+    }
+    
+    /*
+        DELETING A TODO
+    */
+    deleteTodo(id) {
+        const deleteUrl = API_URL+id;
+        fetch(deleteUrl, {
+            method: 'delete'
+        })
+        .then(resp => {
+            if(!resp.ok) {
+                if(resp.status >= 400 && resp.status < 500) {
+                    return resp.json().then(data => {
+                        let err = {errorMessage: data.message};
+                        throw err;
+                    });
+                } else {
+                    let err = {errorMessage: 'Server is not responding. Please try again later.'};
+                    throw err;
+                }
+            }
+        })
+        .then(() => {
+            const todos = this.state.todos.filter(todo => todo._id !== id)
+            this.setState({todos: todos});
+        });
+    }
+    
     render() {
+        const todos = this.state.todos.map(t => (
+            <TodoItem 
+                key={t._id}
+                {...t}
+                onDelete={this.deleteTodo.bind(this, t._id)}
+            />    
+        ));
         return (
-            <h1>To-do List</h1>
-        )
+            <div>
+                <h1>To-do List</h1>
+                <TodoForm addTodo={this.addTodo} />
+                <ul>{todos}</ul>
+            </div>
+        );
     }
 }
 
